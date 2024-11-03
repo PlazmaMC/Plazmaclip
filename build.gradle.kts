@@ -39,17 +39,8 @@ tasks {
     }
 }
 
-publishing.publications {
-    repositories.maven("https://maven.pkg.github.com/PlazmaMC/Plazmaclip") {
-        name = "githubPackage"
-
-        credentials {
-            username = System.getenv("GITHUB_USERNAME")
-            password = System.getenv("GITHUB_TOKEN")
-        }
-    }
-
-    register<MavenPublication>("maven") {
+publishing {
+    publications.register<MavenPublication>("maven") {
         groupId = project.group.toString()
         version = project.version.toString()
         artifactId = "plazmaclip"
@@ -91,6 +82,15 @@ publishing.publications {
                 connection.set("scm:git:https://github.com/PlazmaMC/Plazmaclip.git")
                 developerConnection.set("scm:git:git@github.com:https://github.com/PlazmaMC/Plazmaclip.git")
             }
+        }
+    }
+
+    repositories.maven("https://maven.pkg.github.com/PlazmaMC/Plazmaclip") {
+        name = "githubPackage"
+
+        credentials {
+            username = System.getenv("GITHUB_USERNAME")
+            password = System.getenv("GITHUB_TOKEN")
         }
     }
 }

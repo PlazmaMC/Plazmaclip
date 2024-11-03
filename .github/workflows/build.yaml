@@ -6,7 +6,7 @@ on:
 
 jobs:
   release:
-    name: Release Plazma
+    name: Release Plazmaclip
     strategy:
       matrix:
         base_jdk: [21]
@@ -30,11 +30,10 @@ jobs:
           version: latest
           cache: 'gradle'
 
-      - name: Configure Git
-        run: git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com" && git config --global user.name "github-actions[bot]"
-
       - name: Publish Packages
         if: ${{ github.ref_name == 'master' }}
         run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
           export GITHUB_USERNAME=${{ github.repository_owner }}
           ./gradlew publish --info --stacktrace
