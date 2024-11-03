@@ -1,0 +1,40 @@
+name: Release Plazmaclip
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  release:
+    name: Release Plazma
+    strategy:
+      matrix:
+        base_jdk: [21]
+        os: [ubuntu-22.04]
+
+    if: "!startsWith(github.event.commits[0].message, '[CI-Skip]')"
+    runs-on: ${{ matrix.os }}
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Gradle Wrapper
+        uses: gradle/actions/wrapper-validation@v4
+
+      - name: Set up GraalVM ${{ matrix.base_jdk }}
+        uses: graalvm/setup-graalvm@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          java-version: ${{ matrix.base_jdk }}
+          version: latest
+          cache: 'gradle'
+
+      - name: Configure Git
+        run: git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com" && git config --global user.name "github-actions[bot]"
+
+      - name: Publish Packages
+        if: ${{ github.ref_name == 'master' }}
+        run: |
+          export GITHUB_USERNAME=${{ github.repository_owner }}
+          ./gradlew publish --info --stacktrace
